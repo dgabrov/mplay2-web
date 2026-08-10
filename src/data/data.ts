@@ -1,0 +1,34 @@
+export interface ErrorData {
+    id: string
+    message: string
+    date: Date
+}
+
+export interface LoginData {
+    login: string
+    name: string
+    id: string
+}
+
+export interface Media {
+    id: string
+    userId: string
+    description: string
+    contentType: string
+    size: number
+    width: number
+    height: number
+}
+
+export interface PlayList {
+    playlistId: string
+    userId: string
+    description: string
+}
+
+export interface MediaList {
+    id: string
+    playlistId: string
+    media: Media
+    seqNo: number
+}
