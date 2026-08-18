@@ -31,7 +31,7 @@ const ContentPlaylist = () => {
 
             setSelectedMedia([])
             setMedia(foundMedia)
-        } catch(err : any){
+        } catch (err: any) {
             dispatch(pushError(err))
         }
     }
@@ -47,7 +47,7 @@ const ContentPlaylist = () => {
 
     const addMedia = async () => {
         try {
-            if(selectedMedia.length > 0){
+            if (selectedMedia.length > 0) {
                 await getService().addMediaToPlaylist(playlistId, selectedMedia)
 
                 // no longer any media selected
@@ -56,19 +56,19 @@ const ContentPlaylist = () => {
                 // add media in the playlist media
                 setSelectedPlaylistMedia([])
 
-                const items : Media[] = await getService().getMediaForPlaylist(playlistId)
+                const items: Media[] = await getService().getMediaForPlaylist(playlistId)
                 setPlaylistMedia(items)
             } else {
                 dispatch(pushError('please select at leat one media item to add to the current playlist'))
             }
-        } catch(err : any){
+        } catch (err: any) {
             dispatch(pushError(err))
         }
     }
 
     const removeMedia = async () => {
         try {
-            if(selectedPlaylistMedia.length > 0){
+            if (selectedPlaylistMedia.length > 0) {
                 await getService().removeMediaFromPlaylist(playlistId, selectedPlaylistMedia)
 
                 setPlaylistMedia(playlistMedia.filter(media => !selectedPlaylistMedia.includes(media.id)))
@@ -76,12 +76,12 @@ const ContentPlaylist = () => {
             } else {
                 dispatch(pushError('please select which media you want to remove from the current playlist'))
             }
-        } catch(err : any){
+        } catch (err: any) {
             dispatch(pushError(err))
         }
     }
 
-    const isMediaSelected = (id: string) : boolean => {
+    const isMediaSelected = (id: string): boolean => {
         return selectedMedia.includes(id)
     }
 
@@ -90,7 +90,7 @@ const ContentPlaylist = () => {
             const checked = event.target.checked;
 
             const newSelected = selectedMedia.filter((currentId) => currentId !== id);
-            if(checked) {
+            if (checked) {
                 newSelected.push(id);
             }
 
@@ -103,11 +103,11 @@ const ContentPlaylist = () => {
     }
 
     const changePlaylistMediaSelected = (id: string) => {
-        return (event : any)=> {
+        return (event: any) => {
             const checked = event.target.checked;
 
             const newSelected = selectedPlaylistMedia.filter((currentId) => currentId !== id);
-            if(checked) {
+            if (checked) {
                 newSelected.push(id);
             }
 
@@ -129,39 +129,44 @@ const ContentPlaylist = () => {
                 </thead>
                 <tbody>
                 <tr>
-                    <td>
-                        Search:
+                    <td colSpan={2}>
                         <input
                             type="text"
-                            className="form-input"
+                            className="form-input margin-left"
                             value={searchMedia}
+                            placeholder="Search Media"
                             onChange={(e) => setSearchMedia(e.target.value)}
                         />
 
-                        <button className="regular-btn" onClick={triggerSearchMedia}>Search</button>
+                        <button className="regular-btn margin-left" onClick={triggerSearchMedia}>Search</button>
                     </td>
-                    <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td>
-                        <ul className="margin-left no-bullet">
+                    <td className="align-top">
+                        <ul className="margin-left no-bullet padding-double">
                             {
+                                media?.length > 0 &&
                                 media.map(item =>
-                                    <li key={item.id}>
-                                        <input type="checkbox" checked={isMediaSelected(item.id)} onChange={changeMediaSelected(item.id)}/>{item.description}
+                                    <li key={item.id} className={'margin-bottom'}>
+                                        <input type="checkbox" checked={isMediaSelected(item.id)} onChange={changeMediaSelected(item.id)}/>
+                                        <span className={'margin-left'}>{item.description}</span>
                                     </li>)
+                            }
+                            {
+                                media?.length === 0 && <li><span className={'margin-left'}>No items...</span></li>
                             }
                         </ul>
                     </td>
-                    <td>
-                        <ul className="margin-left no-bullet">
+                    <td className="align-top">
+                        <ul className="margin-left no-bullet padding-double">
                             {
                                 playlistMedia.map(
-                                item =>
-                                    <li key={item.id}>
-                                        <input type="checkbox" checked={isPlaylistChecked(item.id)} onChange={changePlaylistMediaSelected(item.id)}/>
-                                        {item.description}
-                                    </li>)
+                                    item =>
+                                        <li key={item.id} className={'margin-bottom'}>
+                                            <input type="checkbox" checked={isPlaylistChecked(item.id)}
+                                                   onChange={changePlaylistMediaSelected(item.id)}/>
+                                            <span className={'margin-left'}>{item.description}</span>
+                                        </li>)
                             }
                         </ul>
                     </td>

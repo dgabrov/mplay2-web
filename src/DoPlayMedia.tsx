@@ -24,8 +24,8 @@ const DoPlayMedia = () => {
 
             <div className="margin-top">
                 <button className="regular-btn">&lt; 10sec</button>
-                <button className="regular-btn">Start/Stop</button>
-                <button className="regular-btn">&gt; 10sec</button>
+                <button className="regular-btn margin-left">Start/Stop</button>
+                <button className="regular-btn margin-left">&gt; 10sec</button>
             </div>
             <div>
                 <button className="regular-btn margin-top" onClick={goBack}>Back</button>

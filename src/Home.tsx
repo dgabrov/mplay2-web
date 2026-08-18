@@ -273,7 +273,7 @@ const Home = () => {
                            value={searchMedia}/>
                     <button className="regular-btn margin-left" onClick={proceedSearchMedia}>Search</button>
                     <button className="regular-btn margin-left" onClick={clearMediaList}>Clear</button>
-                    <button className="regular-btn" onClick={trimMedia}>Trim</button>
+                    <button className="regular-btn margin-left" onClick={trimMedia}>Trim</button>
                 </div>
                 <table className="table margin-top">
                     <thead>
@@ -300,7 +300,7 @@ const Home = () => {
                     </tbody>
                 </table>
                 <button className="regular-btn margin-top" onClick={addMedia}>Add</button>
-                <button className="regular-btn margin-top" onClick={removeMedia}>Remove</button>
+                <button className="regular-btn margin-top margin-left" onClick={removeMedia}>Remove</button>
             </div>
 
             <div className="fl margin-top">
@@ -311,7 +311,7 @@ const Home = () => {
                            onChange={(e) => setSearchList(e.target.value)}/>
                     <button className="regular-btn margin-left" onClick={proceedSearchPlaylist}>Search</button>
                     <button className="regular-btn margin-left" onClick={clearPlayList}>Clear</button>
-                    <button className="regular-btn" onClick={trimPlayList}>Trim</button>
+                    <button className="regular-btn margin-left" onClick={trimPlayList}>Trim</button>
                 </div>
                 <table className="table margin-top">
                     <thead>
@@ -341,7 +341,7 @@ const Home = () => {
                     </tbody>
                 </table>
                 <button className="regular-btn margin-top" onClick={addPlaylist}>Add</button>
-                <button className="regular-btn margin-top" onClick={removePlaylist}>Remove</button>
+                <button className="regular-btn margin-top margin-left" onClick={removePlaylist}>Remove</button>
             </div>
         </div>
     )

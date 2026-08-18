@@ -73,9 +73,8 @@ export class MockService implements IService {
         }
 
         if (adding) {
-            const newId = `media_${currentUserId}_${userMedia.length + 1}`;
             const newMedia: Media = {
-                id: newId,
+                id: id,
                 userId: currentUserId,
                 description,
                 contentType: 'audio/mpeg',
@@ -86,12 +85,14 @@ export class MockService implements IService {
             userMedia.push(newMedia);
             return newMedia;
         } else {
-            const media = userMedia.find(m => m.id === id);
-            if (!media) {
+            const mediaIndex = userMedia.findIndex(m => m.id === id);
+            if (mediaIndex === -1) {
                 throw new Error(`Media with id ${id} not found`);
             }
-            media.description = description;
-            return media;
+            const updatedMedia = structuredClone(userMedia[mediaIndex]);
+            updatedMedia.description = description;
+            userMedia[mediaIndex] = updatedMedia;
+            return updatedMedia;
         }
     }
 

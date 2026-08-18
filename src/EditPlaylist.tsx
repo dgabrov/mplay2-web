@@ -33,11 +33,11 @@ const EditPlaylist = () => {
 
     const save = async () => {
         try {
-            const newData : PlayList = {
+            const newData: PlayList = {
                 playlistId: editP.id, description: newDescription, userId: userId
             }
 
-            if(adding){
+            if (adding) {
                 await getService().addPlaylist(newData)
             } else {
                 await getService().updatePlaylist(newData)
@@ -48,7 +48,7 @@ const EditPlaylist = () => {
 
             // go back
             dispatch(navigate(LOCATION_HOME))
-        } catch(e : any) {
+        } catch (e: any) {
             dispatch(pushError(e))
         }
     }
@@ -56,9 +56,7 @@ const EditPlaylist = () => {
     return (
         <div className="content">
             <h1>
-                {adding && 'Add'}
-                {!adding && 'Edit'}
-                Playlist
+                {adding && 'Add'} {!adding && 'Edit'} Playlist
             </h1>
 
             <table className="table margin-top">
