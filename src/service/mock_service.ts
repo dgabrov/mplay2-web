@@ -96,7 +96,7 @@ export class MockService implements IService {
         }
     }
 
-    async Login(login: string, _password: string): Promise<LoginData> {
+    async proceedLogin(login: string, _password: string): Promise<LoginData> {
         let res : LoginData
         if (Object.hasOwn(users, login)){
             res = users[login]
@@ -253,5 +253,6 @@ export class MockService implements IService {
             );
         }
     }
+
 
 }

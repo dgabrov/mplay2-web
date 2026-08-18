@@ -3,17 +3,17 @@ import NotFound from "./NotFound.tsx";
 import {useAppDispatch, useAppSelector} from "./store.ts";
 import Header from "./Header.tsx";
 import {useEffect} from "react";
-import {clearError} from "./slices/mediaReducer.ts";
+import {clearError, setServerUrl} from "./slices/mediaReducer.ts";
 
 import {
     ERROR_TIMEOUT,
-    LOCATION_HOME,
-    LOCATION_LOGIN,
-    LOCATION_EDIT_MEDIA,
+    LOCATION_CONTENT_PLAYLIST,
     LOCATION_DELETE_MEDIA,
     LOCATION_DELETE_PLAYLIST,
+    LOCATION_EDIT_MEDIA,
     LOCATION_EDIT_PLAYLIST,
-    LOCATION_CONTENT_PLAYLIST,
+    LOCATION_HOME,
+    LOCATION_LOGIN,
     LOCATION_PLAY_MEDIA,
     LOCATION_PLAY_PLAYLIST
 } from "./data/constants";
@@ -26,6 +26,7 @@ import EditPlaylist from "./EditPlaylist.tsx";
 import ContentPlaylist from "./ContentPlaylist.tsx";
 import DoPlayMedia from "./DoPlayMedia.tsx";
 import DoPlayList from "./DoPlayList.tsx";
+import {getServerUrl} from "./service/service.ts";
 
 const locationMap: { [key: string]: any } = {}
 locationMap[LOCATION_LOGIN] = <Login/>
@@ -51,6 +52,20 @@ const App = () => {
 
         return () => {
             clearInterval(trigger)
+        }
+    }, [])
+
+    useEffect(() => {
+        try {
+            getServerUrl().then((url) => {
+                console.log(`loaded server url: ${url}`)
+
+                dispatch(setServerUrl(url))
+            }).catch((err: any) => {
+                console.log('error while loading the server url: ' + err)
+            })
+        } catch (err: any) {
+            console.log('error loading the dependency url: ' + err)
         }
     }, [])
 

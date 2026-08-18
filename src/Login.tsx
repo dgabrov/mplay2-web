@@ -22,7 +22,7 @@ const Login = () => {
 
     const doLogin = async () => {
         try {
-            const loginData = await getService().Login(login, password)
+            const loginData = await getService().proceedLogin(login, password)
 
             dispatch(afterLogin(loginData))
             dispatch(navigate(LOCATION_HOME))
