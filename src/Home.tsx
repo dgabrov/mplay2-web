@@ -3,7 +3,7 @@ import {useState} from "react";
 import {
     contentPlaylist,
     deleteMedia,
-    deletePlaylist,
+    deletePlaylist, doPlayList, doPlayMedia,
     editPlaylist,
     goEditMedia,
     pushError,
@@ -15,10 +15,11 @@ import type {Media, PlayList} from "./data/data.ts";
 import {v7} from "uuid";
 import {navigate} from "./slices/locationReducer.ts";
 import {
+    LOCATION_CONTENT_PLAYLIST,
     LOCATION_DELETE_MEDIA,
     LOCATION_DELETE_PLAYLIST,
     LOCATION_EDIT_MEDIA,
-    LOCATION_EDIT_PLAYLIST
+    LOCATION_EDIT_PLAYLIST, LOCATION_PLAY_MEDIA, LOCATION_PLAY_PLAYLIST
 } from "./data/constants.ts";
 
 const Home = () => {
@@ -34,15 +35,14 @@ const Home = () => {
     const [selectedPlaylist, setSelectedPlaylist] = useState<string[]>([]);
 
 
-
     async function proceedSearchMedia() {
         try {
             // search
-            const newMediaList : Media[] = await getService().searchMedia(searchMedia)
+            const newMediaList: Media[] = await getService().searchMedia(searchMedia)
             dispatch(setMediaList(newMediaList))
 
             setSelectedMedia([])
-        } catch(e: any){
+        } catch (e: any) {
             dispatch(pushError(e))
         }
     }
@@ -63,7 +63,7 @@ const Home = () => {
     function toggleSelectAllMedia(event: any) {
         const checked = event.target.checked
 
-        let newSelected : string[] = []
+        let newSelected: string[] = []
 
         if (checked) {
             newSelected = mediaList.map((media) => media.id)
@@ -75,13 +75,13 @@ const Home = () => {
     function isSelectAllMedia(): boolean {
         let res = true;
 
-        if(mediaList.length != selectedMedia.length) {
+        if (mediaList.length != selectedMedia.length) {
             res = false;
         } else if (mediaList.length === 0) {
             res = false;
         } else {
             const presentMedia = mediaList.filter((item) => selectedMedia.includes(item.id));
-            if(presentMedia.length != mediaList.length) {
+            if (presentMedia.length != mediaList.length) {
                 res = false;
             }
         }
@@ -102,21 +102,24 @@ const Home = () => {
             dispatch(navigate(LOCATION_EDIT_MEDIA))
         }
     }
+
     function play(id: string) {
         return (event: any) => {
             event.preventDefault();
 
-            console.log(`play id: ${id}`)
+            const item = mediaList.find((media) => media.id === id)
+            dispatch(doPlayMedia(item!!))
+            dispatch(navigate(LOCATION_PLAY_MEDIA))
         }
     }
 
     async function proceedSearchPlaylist() {
         try {
-            const newPlaylist : PlayList[] = await getService().searchPlaylists(searchList);
+            const newPlaylist: PlayList[] = await getService().searchPlaylists(searchList);
             dispatch(setPlayList(newPlaylist))
 
             setSelectedPlaylist([])
-        } catch(e : any){
+        } catch (e: any) {
             dispatch(pushError(e))
         }
     }
@@ -127,7 +130,7 @@ const Home = () => {
     }
 
     function trimPlayList() {
-        if(selectedPlaylist.length > 0) {
+        if (selectedPlaylist.length > 0) {
             const newPlaylist = playlists.filter((item) => selectedPlaylist.includes(item.playlistId))
 
             dispatch(setPlayList(newPlaylist))
@@ -149,7 +152,7 @@ const Home = () => {
 
     function toggleSelectAllPlaylist(event: any) {
         const checked = event.target.checked
-        let newSelected : string[] = []
+        let newSelected: string[] = []
 
         if (checked) {
             newSelected = playlists.map((item) => item.playlistId)
@@ -158,17 +161,17 @@ const Home = () => {
         setSelectedPlaylist(newSelected)
     }
 
-    function isSelectAllPlaylist() : boolean {
+    function isSelectAllPlaylist(): boolean {
         let res = true;
 
-        if(selectedPlaylist.length !== playlists.length) {
+        if (selectedPlaylist.length !== playlists.length) {
             res = false;
-        } else if(selectedPlaylist.length === 0) {
+        } else if (selectedPlaylist.length === 0) {
             res = false;
         } else {
             const filteredLists = playlists.filter((item) => selectedPlaylist.includes(item.playlistId))
 
-            if(filteredLists.length != selectedPlaylist.length) {
+            if (filteredLists.length != selectedPlaylist.length) {
                 res = false;
             }
         }
@@ -194,10 +197,12 @@ const Home = () => {
         return selectedPlaylist.includes(id);
     }
 
-    function playPlaylist(_id: string) {
-        return (event: any) => {
-            // TODO
-            event.preventDefault();
+    function playPlaylist(playlistId: string) {
+        return () => {
+            const pll = playlists.find((playlist) => playlist.playlistId === playlistId);
+
+            dispatch(doPlayList(pll!!))
+            dispatch(navigate(LOCATION_PLAY_PLAYLIST))
         }
     }
 
@@ -217,7 +222,7 @@ const Home = () => {
             event.preventDefault();
 
             dispatch(contentPlaylist(id))
-            dispatch(navigate(LOCATION_EDIT_PLAYLIST))
+            dispatch(navigate(LOCATION_CONTENT_PLAYLIST))
         }
     }
 
@@ -230,7 +235,7 @@ const Home = () => {
     }
 
     function removeMedia() {
-        if(selectedMedia.length > 0) {
+        if (selectedMedia.length > 0) {
             dispatch(deleteMedia(selectedMedia))
             dispatch(navigate(LOCATION_DELETE_MEDIA))
         } else {
@@ -247,7 +252,7 @@ const Home = () => {
     }
 
     function removePlaylist() {
-        if(selectedPlaylist.length > 0) {
+        if (selectedPlaylist.length > 0) {
             dispatch(deletePlaylist(selectedPlaylist))
             dispatch(navigate(LOCATION_DELETE_PLAYLIST))
         } else {
@@ -264,7 +269,8 @@ const Home = () => {
                 <h1>Media</h1>
                 <div>
                     Search:
-                    <input type="text" className="form-input" onChange={(e) => setSearchMedia(e.target.value)} value={searchMedia} />
+                    <input type="text" className="form-input" onChange={(e) => setSearchMedia(e.target.value)}
+                           value={searchMedia}/>
                     <button className="regular-btn margin-left" onClick={proceedSearchMedia}>Search</button>
                     <button className="regular-btn margin-left" onClick={clearMediaList}>Clear</button>
                     <button className="regular-btn" onClick={trimMedia}>Trim</button>
@@ -281,7 +287,8 @@ const Home = () => {
                     <tbody>
                     {mediaList.length > 0 && mediaList.map((media: Media) => (
                         <tr key={media.id}>
-                            <td><input type={'checkbox'} checked={isSelectedMedia(media.id)} onChange={toggleSelectOneMedia(media.id)}/></td>
+                            <td><input type={'checkbox'} checked={isSelectedMedia(media.id)}
+                                       onChange={toggleSelectOneMedia(media.id)}/></td>
                             <td>{media.description}</td>
                             <td><a href={'#'} onClick={play(media.id)}>Play</a></td>
                             <td><a href={'#'} onClick={edit(media.id)}>Edit</a></td>
@@ -300,7 +307,8 @@ const Home = () => {
                 <h1>Playlist</h1>
                 <div>
                     Search:
-                    <input type="text" className="form-input" value={searchList} onChange={(e) => setSearchList(e.target.value)}/>
+                    <input type="text" className="form-input" value={searchList}
+                           onChange={(e) => setSearchList(e.target.value)}/>
                     <button className="regular-btn margin-left" onClick={proceedSearchPlaylist}>Search</button>
                     <button className="regular-btn margin-left" onClick={clearPlayList}>Clear</button>
                     <button className="regular-btn" onClick={trimPlayList}>Trim</button>
@@ -308,7 +316,8 @@ const Home = () => {
                 <table className="table margin-top">
                     <thead>
                     <tr>
-                        <td><input type="checkbox" onChange={toggleSelectAllPlaylist} checked={isSelectAllPlaylist()} /></td>
+                        <td><input type="checkbox" onChange={toggleSelectAllPlaylist} checked={isSelectAllPlaylist()}/>
+                        </td>
                         <td>Name</td>
                         <td>Play</td>
                         <td>Edit</td>
@@ -318,14 +327,17 @@ const Home = () => {
                     <tbody>
                     {playlists.length > 0 && playlists.map((play: PlayList) => (
                         <tr key={play.playlistId}>
-                            <td><input type="checkbox" onChange={toggleSelectOnePlaylist(play.playlistId)} checked={isSelectedPlaylist(play.playlistId)}/></td>
+                            <td><input type="checkbox" onChange={toggleSelectOnePlaylist(play.playlistId)}
+                                       checked={isSelectedPlaylist(play.playlistId)}/></td>
                             <td>{play.description}</td>
                             <td><a href="#" onClick={playPlaylist(play.playlistId)}>Play</a></td>
                             <td><a href="#" onClick={proceedEditPlaylist(play.playlistId)}>Edit</a></td>
                             <td><a href="#" onClick={content(play.playlistId)}>Content</a></td>
                         </tr>
                     ))}
-                    {playlists.length == 0 && <tr key={'no items'}><td colSpan={4}>No items...</td></tr>}
+                    {playlists.length == 0 && <tr key={'no items'}>
+                        <td colSpan={4}>No items...</td>
+                    </tr>}
                     </tbody>
                 </table>
                 <button className="regular-btn margin-top" onClick={addPlaylist}>Add</button>

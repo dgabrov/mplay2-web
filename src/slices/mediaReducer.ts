@@ -35,6 +35,8 @@ export interface MediaStore {
     deletePlaylist: string[]
     editPlaylist: EditPlaylist
     contentPlaylist: string
+    playMedia: Media | null | undefined
+    proceedPlayList: PlayList | null | undefined
 }
 
 const initialState: MediaStore = {
@@ -54,6 +56,8 @@ const initialState: MediaStore = {
     deletePlaylist: [],
     editPlaylist: {id: '', adding: false},
     contentPlaylist: '',
+    playMedia: null,
+    proceedPlayList: null,
 }
 
 const errorImplementation = (state: MediaStore, action: PayloadAction<any>) => {
@@ -175,6 +179,14 @@ const afterEditPlaylistImplementation = (state: MediaStore, editPlayList: Payloa
     }
 }
 
+const playListImplementation = (state: MediaStore, playList: PayloadAction<PlayList>) => {
+    state.proceedPlayList = playList.payload
+}
+
+const playMediaImplementation = (state: MediaStore, media: PayloadAction<Media>) => {
+    state.playMedia = media.payload
+}
+
 
 export const mediaReducer = createSlice({
     name: 'store',
@@ -195,6 +207,8 @@ export const mediaReducer = createSlice({
         editPlaylist: editPlaylistImplementation,
         afterEditPlaylist: afterEditPlaylistImplementation,
         contentPlaylist: contentPlaylistImplementation,
+        doPlayList: playListImplementation,
+        doPlayMedia: playMediaImplementation
     },
 })
 
@@ -214,6 +228,8 @@ export const {
     editPlaylist,
     afterEditPlaylist,
     contentPlaylist,
+    doPlayList,
+    doPlayMedia
 } = mediaReducer.actions
 
 const reducer = mediaReducer.reducer
