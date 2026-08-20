@@ -22,6 +22,58 @@ const DoPlayList = () => {
     const [currentGuid, setCurrentGuid] = useState<string>('')
 
 
+    const mediaEnded = () => {
+        if (mediaIndex < playlistMedia.length - 1) {
+            next();
+
+            // now this won't be playing, so ensure you start it
+            start()
+        }
+    }
+
+    const previous = () => {
+        if (playlistMedia.length > 0 && mediaIndex > 0) {
+            const playing = isPlaying()
+
+            setMediaIndex(mediaIndex - 1)
+
+            if (playing) {
+                start()
+            }
+        }
+    }
+
+    const leftTenSec = () => {
+        // TODO
+    }
+
+    const togglePlay = () => {
+        if (isPlaying()) {
+            stop()
+        } else {
+            if (playlistMedia.length > 0) {
+                start()
+            }
+        }
+    }
+
+    const rightTenSec = () => {
+        // TODO
+    }
+
+    const next = () => {
+        const size = playlistMedia.length
+        if (mediaIndex < size - 1) {
+            const playing = isPlaying()
+
+            changeMediaIndex(mediaIndex + 1)
+
+            if (playing) {
+                start()
+            }
+        }
+    }
+
     const changeMediaIndex = (index : number, force = true)=> {
         if (force || index !== mediaIndex) {
             // first stop the processing
@@ -37,9 +89,19 @@ const DoPlayList = () => {
         }
     }
 
+    const isPlaying = () : boolean => {
+        return ! mediaComponent.current?.paused
+    }
+
     const stop = () => {
         if (mediaComponent.current && !mediaComponent.current.paused) {
             mediaComponent.current.pause()
+        }
+    }
+
+    const start = () => {
+        if (mediaComponent.current && mediaComponent.current.paused) {
+            mediaComponent.current.play()
         }
     }
 
@@ -57,7 +119,12 @@ const DoPlayList = () => {
             event.preventDefault();
             event.stopPropagation()
 
-            changeMediaIndex(index, false)
+            if (index !== mediaIndex) {
+                changeMediaIndex(index, false);
+
+                // always be playing, as the button has "play" on it
+                start()
+            }
         }
     }
 
@@ -66,8 +133,10 @@ const DoPlayList = () => {
     }
 
     useEffect(() => {
+        // generate a new guid for this particular page to avoid caching
         setCurrentGuid(v7())
 
+        // load memory playlist
         getService().getMediaForPlaylist(ppl!!.playlistId).then((result: Media[]) => {
             setPlaylistMedia(result);
 
@@ -85,15 +154,15 @@ const DoPlayList = () => {
 
             <div className="player-container">
                 <div className="player-main">
-                    <div className="video-placeholder"><video controls src={''} ref={mediaComponent}/></div>
+                    <div className="video-placeholder"><video controls src={''} ref={mediaComponent} onEnded={mediaEnded}/></div>
 
                     <div className="controls-section">
                         <div className="controls">
-                            <button className="control-btn">Previous</button>
-                            <button className="control-btn secondary">&lt; 10sec</button>
-                            <button className="control-btn primary">Start/Stop</button>
-                            <button className="control-btn secondary">&gt; 10sec</button>
-                            <button className="control-btn">Next</button>
+                            <button className="control-btn" onClick={previous}>Previous</button>
+                            <button className="control-btn secondary" onClick={leftTenSec}>&lt; 10sec</button>
+                            <button className="control-btn primary" onClick={togglePlay}>Start/Stop</button>
+                            <button className="control-btn secondary" onClick={rightTenSec}>&gt; 10sec</button>
+                            <button className="control-btn" onClick={next}>Next</button>
                         </div>
                     </div>
                 </div>
