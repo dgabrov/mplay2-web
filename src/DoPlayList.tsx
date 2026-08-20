@@ -116,7 +116,10 @@ const DoPlayList = () => {
             id = playlistMedia[mediaIndex].id;
         }
 
-        return `${window.location.origin}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
+        let fullUrl = `${window.location.origin}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
+        console.log(`full url: ${fullUrl}`);
+
+        return fullUrl;
     }
 
     const play = (index: number) => {
@@ -126,9 +129,11 @@ const DoPlayList = () => {
 
             if (index !== mediaIndex) {
                 changeMediaIndex(index, false);
+            }
 
+            if (!isPlaying()) {
                 // always be playing, as the button has "play" on it
-                start()
+                start();
             }
         }
     }
@@ -144,12 +149,16 @@ const DoPlayList = () => {
         // load memory playlist
         getService().getMediaForPlaylist(ppl!!.playlistId).then((result: Media[]) => {
             setPlaylistMedia(result);
-
-            changeMediaIndex(0, true)
         }).catch((err: any) => {
             dispatch(pushError(err))
         })
     }, [])
+
+    useEffect(() => {
+        if (playlistMedia.length > 0) {
+            changeMediaIndex(0, true)
+        }
+    }, [playlistMedia])
 
 
     return (
@@ -157,7 +166,7 @@ const DoPlayList = () => {
             <h1>Play</h1>
             <h2>Media: {ppl!!.description}</h2>
 
-            <div><video controls src={''} ref={videoElement} onEnded={mediaEnded}/></div>
+            <div><video controls ref={videoElement} onEnded={mediaEnded}/></div>
 
             <div className="margin-top">
                 <button className="regular-btn" onClick={previous}>Previous</button>

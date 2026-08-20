@@ -231,6 +231,11 @@ video {
     font-weight: bold;
 }
 
+ul.playlists {
+    width: 100%;
+    max-width: 600px;
+}
+
 .playlists li {
     padding: 16px;
     cursor: pointer;
