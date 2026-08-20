@@ -1,23 +1,63 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getService} from "./service/service.ts";
 import type {Media} from "./data/data.ts";
 import {pushError} from "./slices/mediaReducer.ts";
 import {useAppDispatch, useAppSelector} from "./store.ts";
 import {LOCATION_HOME} from "./data/constants.ts";
-import { navigate } from "./slices/locationReducer.ts";
+import {navigate} from "./slices/locationReducer.ts";
+import {v7} from "uuid";
 
 const DoPlayList = () => {
 
     const dispatch = useAppDispatch()
 
     const ppl = useAppSelector(state => state.media.proceedPlayList)
-    const [playlistMedia, setPlaylistMedia] = useState<Media[]>([])
+    const serverUrl = useAppSelector((state) => state.media.serverUrl);
 
+    const [playlistMedia, setPlaylistMedia] = useState<Media[]>([])
+    const [mediaIndex, setMediaIndex] = useState(0)
+
+    const mediaComponent = useRef<HTMLVideoElement>(null)
+
+    const [currentGuid, setCurrentGuid] = useState<string>('')
+
+
+    const changeMediaIndex = (index : number, force = true)=> {
+        if (force || index !== mediaIndex) {
+            // first stop the processing
+            stop()
+
+            //set the media index
+            setMediaIndex(index)
+
+            if (playlistMedia?.length > 0) {
+                // and now rearrange the url
+                mediaComponent.current!!.src = getFullUrl();
+            }
+        }
+    }
+
+    const stop = () => {
+        if (mediaComponent.current && !mediaComponent.current.paused) {
+            mediaComponent.current.pause()
+        }
+    }
+
+    const getFullUrl = (): string => {
+        let id = ''
+        if (playlistMedia?.length > 0 && mediaIndex >= 0 && mediaIndex < playlistMedia.length) {
+            id = playlistMedia[mediaIndex].id;
+        }
+
+        return `${window.location.origin}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
+    }
 
     const play = (index: number) => {
-        return (event: any)=> {
-            // TODO
-            console.log(event + "," + index)
+        return (event: any) => {
+            event.preventDefault();
+            event.stopPropagation()
+
+            changeMediaIndex(index, false)
         }
     }
 
@@ -26,8 +66,12 @@ const DoPlayList = () => {
     }
 
     useEffect(() => {
+        setCurrentGuid(v7())
+
         getService().getMediaForPlaylist(ppl!!.playlistId).then((result: Media[]) => {
             setPlaylistMedia(result);
+
+            changeMediaIndex(0, true)
         }).catch((err: any) => {
             dispatch(pushError(err))
         })
@@ -41,7 +85,7 @@ const DoPlayList = () => {
 
             <div className="player-container">
                 <div className="player-main">
-                    <div className="video-placeholder">video tag here</div>
+                    <div className="video-placeholder"><video controls src={''} ref={mediaComponent}/></div>
 
                     <div className="controls-section">
                         <div className="controls">
@@ -57,7 +101,16 @@ const DoPlayList = () => {
                 <div className="player-sidebar">
                     <h3>Playlist</h3>
                     <ul className="playlist">
-                        {playlistMedia.map((item, index) => <li className="playlist-item" key={item.id}><a href="#" onClick={play(index)}>play</a> {item.description}</li>)}
+                        {
+                            playlistMedia.map((item, index) =>
+                                <li className={index === mediaIndex ? "playlist-item current" : "playlist-item"} key={item.id} onClick={
+                                    () => {
+                                        changeMediaIndex(index, false)
+                                    }}>
+                                    <a href="#" onClick={play(index)}>play</a>
+                                    {item.description}
+                                </li>)
+                        }
                     </ul>
                 </div>
             </div>
