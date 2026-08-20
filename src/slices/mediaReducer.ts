@@ -89,7 +89,10 @@ const logoutImplementation = (state: MediaStore, _action: PayloadAction<void>) =
 }
 
 const setMediaListImplementation = (state: MediaStore, mediaList: PayloadAction<Media[]>) => {
-    state.mediaList = mediaList.payload
+    let newMediaList = mediaList.payload
+    newMediaList = newMediaList == null ? [] : newMediaList
+
+    state.mediaList = newMediaList
 };
 
 const setPlayListImplementation = (state: MediaStore, playList: PayloadAction<PlayList[]>) => {

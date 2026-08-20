@@ -1,11 +1,11 @@
-import {MockService} from "./mock_service.ts";
 import type {LoginData, Media, PlayList} from "../data/data.ts";
+import {ProdService} from "./prod_service.ts";
 
 export interface IService {
     proceedLogin: (login: string, password: string) => Promise<LoginData>;
     searchMedia(searchMedia: string): Promise<Media[]>;
     searchPlaylists(searchList: string): Promise<PlayList[]>;
-    updateMedia(adding: any, id: any, description: string): Promise<Media>;
+    updateMedia(adding: any, id: any, description: string, file: File|null, onProgress? : (progress: string) => void): Promise<Media>;
     deleteMedia(ids: string[]): Promise<void>;
     deletePlaylist(ids: string[]): Promise<void>;
     updatePlaylist(newData: PlayList): Promise<void>;
@@ -16,7 +16,7 @@ export interface IService {
 }
 
 export const getService = (): IService => {
-    return new MockService()
+    return new ProdService()
 }
 
 let serverUrl: string = ''

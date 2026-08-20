@@ -24,10 +24,23 @@ const EditMedia = () => {
     }
 
     const [description, setDescription] = useState(descr)
+    const [editField, setEditField] = useState<HTMLInputElement|null>()
+    const [progress, setProgress] = useState<string>('')
 
     async function save() {
         try {
-            const responseMedia : Media = await getService().updateMedia(adding, id, description);
+            let file: File | null = null
+            if(editField != null){
+                const files = editField.files
+
+                if(files && files.length > 0){
+                    file = files[0]
+                }
+            }
+
+            let progressTracker = (prog : string) => {setProgress(prog)};
+
+            const responseMedia : Media = await getService().updateMedia(adding, id, description, file, progressTracker);
             const aem: AfterEditMedia = {
                 id: responseMedia.id,
                 userId: responseMedia.userId,
@@ -62,7 +75,7 @@ const EditMedia = () => {
                 </tr>
                 <tr>
                     <td>File:</td>
-                    <td><input type="file" /></td>
+                    <td><input type="file" ref={(field) => setEditField(field)}/>{progress.length > 0 && <span>&nbsp;{progress}</span>}</td>
                 </tr>
                 </tbody>
             </table>

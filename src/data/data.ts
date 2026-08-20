@@ -26,9 +26,3 @@ export interface PlayList {
     description: string
 }
 
-export interface MediaList {
-    id: string
-    playlistId: string
-    media: Media
-    seqNo: number
-}

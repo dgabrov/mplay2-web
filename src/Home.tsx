@@ -249,6 +249,7 @@ const Home = () => {
         const adding = true;
 
         dispatch(editPlaylist({adding, id}))
+        dispatch(navigate(LOCATION_EDIT_PLAYLIST))
     }
 
     function removePlaylist() {
@@ -262,14 +263,11 @@ const Home = () => {
 
     return (
         <div className="content">
-            <h1>Media</h1>
-            <h2>Select media or playlist</h2>
-
             <div className="fl">
                 <h1>Media</h1>
                 <div>
                     Search:
-                    <input type="text" className="form-input" onChange={(e) => setSearchMedia(e.target.value)}
+                    <input type="text" className="form-input margin-left" onChange={(e) => setSearchMedia(e.target.value)}
                            value={searchMedia}/>
                     <button className="regular-btn margin-left" onClick={proceedSearchMedia}>Search</button>
                     <button className="regular-btn margin-left" onClick={clearMediaList}>Clear</button>
@@ -294,7 +292,7 @@ const Home = () => {
                             <td><a href={'#'} onClick={edit(media.id)}>Edit</a></td>
                         </tr>
                     ))}
-                    {mediaList.length == 0 && <tr key={'no items'}>
+                    {mediaList.length === 0 && <tr key={'no items'}>
                         <td colSpan={4}>No items...</td>
                     </tr>}
                     </tbody>
@@ -307,7 +305,7 @@ const Home = () => {
                 <h1>Playlist</h1>
                 <div>
                     Search:
-                    <input type="text" className="form-input" value={searchList}
+                    <input type="text" className="form-input margin-left" value={searchList}
                            onChange={(e) => setSearchList(e.target.value)}/>
                     <button className="regular-btn margin-left" onClick={proceedSearchPlaylist}>Search</button>
                     <button className="regular-btn margin-left" onClick={clearPlayList}>Clear</button>
@@ -335,8 +333,8 @@ const Home = () => {
                             <td><a href="#" onClick={content(play.playlistId)}>Content</a></td>
                         </tr>
                     ))}
-                    {playlists.length == 0 && <tr key={'no items'}>
-                        <td colSpan={4}>No items...</td>
+                    {playlists.length === 0 && <tr key={'no items'}>
+                        <td colSpan={5}>No items...</td>
                     </tr>}
                     </tbody>
                 </table>
