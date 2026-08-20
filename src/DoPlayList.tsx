@@ -16,8 +16,9 @@ const DoPlayList = () => {
 
     const [playlistMedia, setPlaylistMedia] = useState<Media[]>([])
     const [mediaIndex, setMediaIndex] = useState(0)
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-    const mediaComponent = useRef<HTMLVideoElement>(null)
+    const videoElement = useRef<HTMLVideoElement>(null)
 
     const [currentGuid, setCurrentGuid] = useState<string>('')
 
@@ -43,8 +44,16 @@ const DoPlayList = () => {
         }
     }
 
-    const leftTenSec = () => {
-        // TODO
+    const removeTen = () => {
+        if (videoElement.current) {
+            videoElement.current.currentTime = Math.max(0, videoElement.current.currentTime - 10);
+        }
+    }
+
+    const addTen = () => {
+        if (videoElement.current) {
+            videoElement.current.currentTime = videoElement.current.currentTime + 10;
+        }
     }
 
     const togglePlay = () => {
@@ -55,10 +64,6 @@ const DoPlayList = () => {
                 start()
             }
         }
-    }
-
-    const rightTenSec = () => {
-        // TODO
     }
 
     const next = () => {
@@ -84,24 +89,24 @@ const DoPlayList = () => {
 
             if (playlistMedia?.length > 0) {
                 // and now rearrange the url
-                mediaComponent.current!!.src = getFullUrl();
+                videoElement.current!!.src = getFullUrl();
             }
         }
     }
 
     const isPlaying = () : boolean => {
-        return ! mediaComponent.current?.paused
+        return ! videoElement.current?.paused
     }
 
     const stop = () => {
-        if (mediaComponent.current && !mediaComponent.current.paused) {
-            mediaComponent.current.pause()
+        if (videoElement.current && !videoElement.current.paused) {
+            videoElement.current.pause()
         }
     }
 
     const start = () => {
-        if (mediaComponent.current && mediaComponent.current.paused) {
-            mediaComponent.current.play()
+        if (videoElement.current && videoElement.current.paused) {
+            videoElement.current.play()
         }
     }
 
@@ -152,40 +157,39 @@ const DoPlayList = () => {
             <h1>Play</h1>
             <h2>Media: {ppl!!.description}</h2>
 
-            <div className="player-container">
-                <div className="player-main">
-                    <div className="video-placeholder"><video controls src={''} ref={mediaComponent} onEnded={mediaEnded}/></div>
+            <div><video controls src={''} ref={videoElement} onEnded={mediaEnded}/></div>
 
-                    <div className="controls-section">
-                        <div className="controls">
-                            <button className="control-btn" onClick={previous}>Previous</button>
-                            <button className="control-btn secondary" onClick={leftTenSec}>&lt; 10sec</button>
-                            <button className="control-btn primary" onClick={togglePlay}>Start/Stop</button>
-                            <button className="control-btn secondary" onClick={rightTenSec}>&gt; 10sec</button>
-                            <button className="control-btn" onClick={next}>Next</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="player-sidebar">
-                    <h3>Playlist</h3>
-                    <ul className="playlist">
-                        {
-                            playlistMedia.map((item, index) =>
-                                <li className={index === mediaIndex ? "playlist-item current" : "playlist-item"} key={item.id} onClick={
-                                    () => {
-                                        changeMediaIndex(index, false)
-                                    }}>
-                                    <a href="#" onClick={play(index)}>play</a>
-                                    {item.description}
-                                </li>)
-                        }
-                    </ul>
-                </div>
+            <div className="margin-top">
+                <button className="regular-btn" onClick={previous}>Previous</button>
+                <button className="regular-btn margin-left" onClick={removeTen}>&lt; 10sec</button>
+                <button className="regular-btn margin-left" onClick={togglePlay}>Start/Stop</button>
+                <button className="regular-btn margin-left" onClick={addTen}>&gt; 10sec</button>
+                <button className="regular-btn margin-left" onClick={next}>Next</button>
             </div>
 
-            <div className="footer-controls">
-                <button className="regular-btn" onClick={back}>Back</button>
+            <div className="margin-top">
+                <h3>Playlist</h3>
+                <ul className="no-bullet playlists">
+                    {
+                        playlistMedia.map((item, index) => {
+                            let className = '';
+                            if (index === mediaIndex) className += 'selected';
+                            if (hoveredIndex === index) className += (className ? ' ' : '') + 'hover';
+                            return (
+                                <li key={item.id} className={className} onClick={() => changeMediaIndex(index, false)}
+                                    onMouseEnter={() => setHoveredIndex(index)}
+                                    onMouseLeave={() => setHoveredIndex(null)}>
+                                    <a href="#" onClick={play(index)}>play</a>
+                                    <span className={'margin-left'}>{item.description}</span>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </div>
+
+            <div>
+                <button className="regular-btn margin-top" onClick={back}>Back</button>
             </div>
 
         </div>

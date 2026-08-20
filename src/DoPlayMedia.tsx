@@ -1,7 +1,7 @@
 import {useAppDispatch, useAppSelector} from "./store.ts";
 import {navigate} from "./slices/locationReducer.ts";
 import {LOCATION_HOME} from "./data/constants.ts";
-import {useState} from "react";
+import {useRef} from "react";
 
 const DoPlayMedia = () => {
 
@@ -11,37 +11,37 @@ const DoPlayMedia = () => {
     const serverUrl = useAppSelector((state) => state.media.serverUrl);
     const id = media ? media.id : "";
 
-    const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
+    const videoElement = useRef<HTMLVideoElement>(null);
 
     const fullUrl = `${window.location.origin}${serverUrl}/playMedia?id=${id}`;
 
     const description = media ? media.description : "";
 
     const goBack = () => {
-        if (videoElement) {
-            videoElement.pause();
+        if (videoElement.current) {
+            videoElement.current.pause();
         }
         dispatch(navigate(LOCATION_HOME))
     }
 
     const removeTen = () => {
-        if (videoElement) {
-            videoElement.currentTime = Math.max(0, videoElement.currentTime - 10);
+        if (videoElement.current) {
+            videoElement.current.currentTime = Math.max(0, videoElement.current.currentTime - 10);
         }
     }
 
     const addTen = () => {
-        if (videoElement) {
-            videoElement.currentTime = videoElement.currentTime + 10;
+        if (videoElement.current) {
+            videoElement.current.currentTime = videoElement.current.currentTime + 10;
         }
     }
 
     const startStop = () => {
-        if (videoElement) {
-            if (videoElement.paused) {
-                videoElement.play();
+        if (videoElement.current) {
+            if (videoElement.current.paused) {
+                videoElement.current.play();
             } else {
-                videoElement.pause();
+                videoElement.current.pause();
             }
         }
     }
@@ -51,7 +51,7 @@ const DoPlayMedia = () => {
             <h1>Play</h1>
             <h2>Media: {description}</h2>
 
-            <div><video src={fullUrl} ref={(video) => setVideoElement(video)} controls style={{cursor: 'pointer'}}/></div>
+            <div><video src={fullUrl} ref={videoElement} controls style={{cursor: 'pointer'}}/></div>
 
             <div className="margin-top">
                 <button className="regular-btn" onClick={removeTen}>&lt; 10sec</button>
