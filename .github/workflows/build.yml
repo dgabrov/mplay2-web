@@ -1,0 +1,40 @@
+name: build mplay2-web
+run-name: build mplay2-web
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  docker_login:
+    runs-on: ubuntu-latest
+    name: build mplay2-web web project
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v6
+
+      - name: build
+        run: |
+          echo the build number is: ${GITHUB_RUN_NUMBER}
+          chmod a+rx build.sh
+          echo start docker
+          docker run --workdir /appbuild -v $(pwd):/appbuild node:24-alpine ./build.sh
+          ls -ltr
+          ls -ltr dist
+          docker build . -t 169533462518.dkr.ecr.us-east-2.amazonaws.com/mplay2-web:1.0.${GITHUB_RUN_NUMBER}
+          docker image ls
+
+      - name: docker login
+        run: |
+          val=$(AWS_ACCESS_KEY_ID=${{secrets.DOCKER_AWS_KEY}} AWS_SECRET_ACCESS_KEY=${{secrets.DOCKER_AWS_SECRET}} aws ecr get-login-password --region us-east-2)
+          echo "val=$val" >> $GITHUB_ENV
+          echo $val | docker login --username AWS --password-stdin 169533462518.dkr.ecr.us-east-2.amazonaws.com
+          docker image ls
+
+      - name: docker push
+        run: |
+          docker image push 169533462518.dkr.ecr.us-east-2.amazonaws.com/mplay2-web:1.0.${GITHUB_RUN_NUMBER}
+          echo docker pushed successfully
+

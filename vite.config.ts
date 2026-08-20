@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // Requests starting with /api will be forwarded to target
       '/mediaserv': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
     },
