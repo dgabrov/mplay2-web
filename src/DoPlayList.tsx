@@ -116,7 +116,7 @@ const DoPlayList = () => {
             id = playlistMedia[mediaIndex].id;
         }
 
-        let fullUrl = `${window.location.origin}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
+        let fullUrl = `${window.location.href}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
         console.log(`full url: ${fullUrl}`);
 
         return fullUrl;
