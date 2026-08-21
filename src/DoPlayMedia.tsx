@@ -13,7 +13,7 @@ const DoPlayMedia = () => {
 
     const videoElement = useRef<HTMLVideoElement>(null);
 
-    const fullUrl = `${window.location.origin}${serverUrl}/playMedia?id=${id}`;
+    const fullUrl = `${window.location.href}${serverUrl}/playMedia?id=${id}`;
 
     const description = media ? media.description : "";
 
