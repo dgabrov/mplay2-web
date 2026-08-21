@@ -25,7 +25,6 @@ export interface EditMedia {
 }
 
 export interface MediaStore {
-    serverUrl: string
     errors: ErrorData[]
     version: string
     user: LoginData
@@ -41,7 +40,6 @@ export interface MediaStore {
 }
 
 const initialState: MediaStore = {
-    serverUrl: '',
     errors: [],
     version: '',
     user: {
@@ -192,10 +190,6 @@ const playMediaImplementation = (state: MediaStore, media: PayloadAction<Media>)
     state.playMedia = media.payload
 }
 
-const setServerUrlImplementation = (state: MediaStore, serverUrl: PayloadAction<string>) => {
-    state.serverUrl = serverUrl.payload
-}
-
 
 export const mediaReducer = createSlice({
     name: 'store',
@@ -217,8 +211,7 @@ export const mediaReducer = createSlice({
         afterEditPlaylist: afterEditPlaylistImplementation,
         contentPlaylist: contentPlaylistImplementation,
         doPlayList: playListImplementation,
-        doPlayMedia: playMediaImplementation,
-        setServerUrl: setServerUrlImplementation,
+        doPlayMedia: playMediaImplementation
     },
 })
 
@@ -240,7 +233,6 @@ export const {
     contentPlaylist,
     doPlayList,
     doPlayMedia,
-    setServerUrl
 } = mediaReducer.actions
 
 const reducer = mediaReducer.reducer

@@ -2,18 +2,19 @@ import {useAppDispatch, useAppSelector} from "./store.ts";
 import {navigate} from "./slices/locationReducer.ts";
 import {LOCATION_HOME} from "./data/constants.ts";
 import {useRef} from "react";
+import {getSyncServerUrl} from "./service/service.ts";
 
 const DoPlayMedia = () => {
 
     const dispatch = useAppDispatch();
 
     const media = useAppSelector((state) => state.media.playMedia)
-    const serverUrl = useAppSelector((state) => state.media.serverUrl);
     const id = media ? media.id : "";
 
     const videoElement = useRef<HTMLVideoElement>(null);
 
-    const fullUrl = `${window.location.href}${serverUrl}/playMedia?id=${id}`;
+    const serverUrl = getSyncServerUrl()
+    const fullUrl = `${window.location.origin}${serverUrl}/playMedia?id=${id}`;
 
     const description = media ? media.description : "";
 

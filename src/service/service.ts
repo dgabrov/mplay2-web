@@ -42,3 +42,7 @@ export const getServerUrl = async (): Promise<string> => {
 
     return serverUrl;
 }
+
+export const getSyncServerUrl = () => {
+    return serverUrl
+}
