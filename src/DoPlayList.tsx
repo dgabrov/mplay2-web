@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {getService} from "./service/service.ts";
+import {getService, getSyncServerUrl} from "./service/service.ts";
 import type {Media} from "./data/data.ts";
 import {pushError} from "./slices/mediaReducer.ts";
 import {useAppDispatch, useAppSelector} from "./store.ts";
@@ -12,7 +12,6 @@ const DoPlayList = () => {
     const dispatch = useAppDispatch()
 
     const ppl = useAppSelector(state => state.media.proceedPlayList)
-    const serverUrl = useAppSelector((state) => state.media.serverUrl);
 
     const [playlistMedia, setPlaylistMedia] = useState<Media[]>([])
     const [mediaIndex, setMediaIndex] = useState(0)
@@ -116,10 +115,8 @@ const DoPlayList = () => {
             id = playlistMedia[mediaIndex].id;
         }
 
-        let fullUrl = `${window.location.href}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
-        console.log(`full url: ${fullUrl}`);
-
-        return fullUrl;
+        const serverUrl = getSyncServerUrl()
+        return `${window.location.origin}${serverUrl}/playMedia?id=${id}&uid=${currentGuid}`;
     }
 
     const play = (index: number) => {
