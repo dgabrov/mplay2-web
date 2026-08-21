@@ -26,6 +26,9 @@ export const getServerUrl = async (): Promise<string> => {
         return serverUrl
     }
 
+    const win = window.location.origin
+    console.log(`the url for the origin is the following: ${win}`)
+
     const response = await fetch(`${window.location.origin}/config/config.json`);
 
     if (!response.ok) {
