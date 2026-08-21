@@ -88,7 +88,7 @@ const DoPlayList = () => {
 
             if (playlistMedia?.length > 0) {
                 // and now rearrange the url
-                videoElement.current!!.src = getFullUrl();
+                videoElement.current!!.src = getFullUrl(index);
             }
         }
     }
@@ -109,10 +109,10 @@ const DoPlayList = () => {
         }
     }
 
-    const getFullUrl = (): string => {
+    const getFullUrl = (index: number): string => {
         let id = ''
-        if (playlistMedia?.length > 0 && mediaIndex >= 0 && mediaIndex < playlistMedia.length) {
-            id = playlistMedia[mediaIndex].id;
+        if (playlistMedia?.length > 0 && index >= 0 && index < playlistMedia.length) {
+            id = playlistMedia[index].id;
         }
 
         const serverUrl = getSyncServerUrl()
