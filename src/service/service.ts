@@ -26,10 +26,11 @@ export const getServerUrl = async (): Promise<string> => {
         return serverUrl
     }
 
-    const win = window.location.origin
-    console.log(`the url for the origin is the following: ${win}`)
-
-    const response = await fetch(`${window.location.origin}/config/config.json`);
+    let location = window.location.href;
+    if (! location.endsWith("/")) {
+        location = location + "/"
+    }
+    const response = await fetch(location + "config/config.json");
 
     if (!response.ok) {
         throw new Error('Failed to load config');
