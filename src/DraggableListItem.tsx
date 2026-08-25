@@ -26,7 +26,8 @@ export const DraggableListItem = (props: DraggableListItemProps) => {
     };
 
     return (
-        <li className={'margin-bottom'} style={style} ref={setNodeRef} {...attributes} {...listeners} >
+        <li className={'margin-bottom'} style={style} ref={setNodeRef} {...attributes} >
+            <span {...listeners} tabIndex={0} style={{cursor: 'grab', paddingRight: '16px'}}>⋮</span>
             <input type="checkbox" checked={props.checkedVerifier} onChange={props.changeTrigger}/>
             <span className={'margin-left'}>{props.description}</span>
         </li>
