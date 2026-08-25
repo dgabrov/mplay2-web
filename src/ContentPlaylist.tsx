@@ -152,8 +152,6 @@ const ContentPlaylist = () => {
                 newSelected.push(id);
             }
 
-            console.log('selected items: ' + newSelected)
-
             setSelectedPlaylistMedia(newSelected);
         }
     }
