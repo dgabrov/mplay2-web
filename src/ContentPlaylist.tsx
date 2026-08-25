@@ -144,12 +144,15 @@ const ContentPlaylist = () => {
 
     const changePlaylistMediaSelected = (id: string) => {
         return (event: any) => {
+            event.stopPropagation();
             const checked = event.target.checked;
 
             const newSelected = selectedPlaylistMedia.filter((currentId) => currentId !== id);
             if (checked) {
                 newSelected.push(id);
             }
+
+            console.log('selected items: ' + newSelected)
 
             setSelectedPlaylistMedia(newSelected);
         }
