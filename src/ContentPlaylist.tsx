@@ -5,6 +5,17 @@ import {navigate} from "./slices/locationReducer.ts";
 import type {ExtendedMedia, Media} from "./data/data.ts";
 import {pushError} from "./slices/mediaReducer.ts";
 import {getService} from "./service/service.ts";
+import {DraggableListItem} from "./DraggableListItem.tsx";
+import {
+    closestCenter,
+    DndContext,
+    type DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors
+} from "@dnd-kit/core";
+import {arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from "@dnd-kit/sortable";
 
 const ContentPlaylist = () => {
     const dispatch = useAppDispatch();
@@ -19,11 +30,37 @@ const ContentPlaylist = () => {
     const [media, setMedia] = useState<Media[]>([]);
 
     const [selectedPlaylistMedia, setSelectedPlaylistMedia] = useState<string[]>([]);
-    const [playlistMedia, setPlaylistMedia] = useState<Media[]>([]);
+    const [playlistMedia, setPlaylistMedia] = useState<ExtendedMedia[]>([]);
 
     const back = () => {
         dispatch(navigate(LOCATION_HOME))
     }
+
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent): void => {
+        const {active, over} = event;
+
+        console.log(`current values: ${active.id} and over: ${over && over.id}`);
+
+        if (over && active.id !== over.id) {
+
+            // TODO here is where you call the service to switch the seqNo for the two numbers
+
+            setPlaylistMedia((prevItems) => {
+                const oldIndex = prevItems.findIndex((item) => item.id === active.id);
+                const newIndex = prevItems.findIndex((item) => item.id === over.id);
+
+                return arrayMove(prevItems, oldIndex, newIndex);
+            });
+        }
+    };
 
     const triggerSearchMedia = async () => {
         try {
@@ -56,7 +93,7 @@ const ContentPlaylist = () => {
                 // add media in the playlist media
                 setSelectedPlaylistMedia([])
 
-                const items: Media[] = await getService().getMediaForPlaylist(playlistId)
+                const items: ExtendedMedia[] = await getService().getMediaForPlaylist(playlistId)
                 setPlaylistMedia(items)
             } else {
                 dispatch(pushError('please select at leat one media item to add to the current playlist'))
@@ -148,7 +185,8 @@ const ContentPlaylist = () => {
                                 media?.length > 0 &&
                                 media.map(item =>
                                     <li key={item.id} className={'margin-bottom'}>
-                                        <input type="checkbox" checked={isMediaSelected(item.id)} onChange={changeMediaSelected(item.id)}/>
+                                        <input type="checkbox" checked={isMediaSelected(item.id)}
+                                               onChange={changeMediaSelected(item.id)}/>
                                         <span className={'margin-left'}>{item.description}</span>
                                     </li>)
                             }
@@ -158,17 +196,25 @@ const ContentPlaylist = () => {
                         </ul>
                     </td>
                     <td className="align-top">
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}>
                         <ul className="margin-left no-bullet padding-double">
-                            {
-                                playlistMedia.map(
-                                    item =>
-                                        <li key={item.id} className={'margin-bottom'}>
-                                            <input type="checkbox" checked={isPlaylistChecked(item.id)}
-                                                   onChange={changePlaylistMediaSelected(item.id)}/>
-                                            <span className={'margin-left'}>{item.description}</span>
-                                        </li>)
-                            }
+                            <SortableContext items={playlistMedia.map(item => item.id)} strategy={verticalListSortingStrategy}>
+                            {playlistMedia.map(
+                                item =>
+                                    <DraggableListItem
+                                        key={item.id}
+                                        id={item.id}
+                                        description={item.description}
+                                        checkedVerifier={isPlaylistChecked(item.id)}
+                                        changeTrigger={changePlaylistMediaSelected(item.id)}
+                                    />
+                            )}
+                            </SortableContext>
                         </ul>
+                        </DndContext>
                     </td>
                 </tr>
                 <tr>
