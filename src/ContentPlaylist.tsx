@@ -2,7 +2,7 @@ import {useAppDispatch, useAppSelector} from "./store.ts";
 import {useEffect, useState} from "react";
 import {LOCATION_HOME} from "./data/constants.ts";
 import {navigate} from "./slices/locationReducer.ts";
-import type {Media} from "./data/data.ts";
+import type {ExtendedMedia, Media} from "./data/data.ts";
 import {pushError} from "./slices/mediaReducer.ts";
 import {getService} from "./service/service.ts";
 
@@ -37,7 +37,7 @@ const ContentPlaylist = () => {
     }
 
     useEffect(() => {
-        getService().getMediaForPlaylist(playlistId).then((result: Media[]) => {
+        getService().getMediaForPlaylist(playlistId).then((result: ExtendedMedia[]) => {
             setPlaylistMedia(result);
         }).catch((err: any) => {
             dispatch(pushError(err))

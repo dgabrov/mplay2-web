@@ -1,6 +1,6 @@
 import axios from "axios";
 import {getServerUrl, type IService} from "./service.ts";
-import type {LoginData, Media, PlayList} from "../data/data.ts";
+import type {ExtendedMedia, LoginData, Media, PlayList} from "../data/data.ts";
 
 export class ProdService implements IService {
     async proceedLogin(login: string, password: string): Promise<LoginData> {
@@ -26,7 +26,7 @@ export class ProdService implements IService {
         return processPost({ids}, "/deletePlaylist");
     }
 
-    async getMediaForPlaylist(playlistId: string): Promise<Media[]> {
+    async getMediaForPlaylist(playlistId: string): Promise<ExtendedMedia[]> {
         return processGet(`/getMediaForPlaylist?playlistId=${playlistId}`);
     }
 
