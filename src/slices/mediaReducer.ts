@@ -66,13 +66,12 @@ const errorImplementation = (state: MediaStore, action: PayloadAction<any>) => {
     state.errors.push({
         id: v7(),
         message,
-        date: new Date()
+        date: Date.now()
     })
 }
 
 const clearErrorImplementation = (state: MediaStore) => {
-    const now = new Date()
-    const threeSecondsAgo = new Date(now.getTime() - 3000)
+    const threeSecondsAgo = Date.now() - 3000
     state.errors = state.errors.filter(error => error.date > threeSecondsAgo)
 }
 

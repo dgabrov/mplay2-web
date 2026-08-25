@@ -1,7 +1,7 @@
 export interface ErrorData {
     id: string
     message: string
-    date: Date
+    date: number
 }
 
 export interface LoginData {
