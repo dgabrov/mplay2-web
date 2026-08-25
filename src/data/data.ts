@@ -20,6 +20,10 @@ export interface Media {
     height: number
 }
 
+export interface ExtendedMedia extends Media {
+    seqNo: number;
+}
+
 export interface PlayList {
     playlistId: string
     userId: string

@@ -1,4 +1,4 @@
-import type {LoginData, Media, PlayList} from "../data/data.ts";
+import type {ExtendedMedia, LoginData, Media, PlayList} from "../data/data.ts";
 import {ProdService} from "./prod_service.ts";
 
 export interface IService {
@@ -11,8 +11,9 @@ export interface IService {
     updatePlaylist(newData: PlayList): Promise<void>;
     addPlaylist(newData: PlayList): Promise<void>;
     addMediaToPlaylist(playlistId: any, mediaIds: string[]): Promise<void>;
-    getMediaForPlaylist(playlistId: any): Promise<Media[]>;
+    getMediaForPlaylist(playlistId: any): Promise<ExtendedMedia[]>;
     removeMediaFromPlaylist(playlistId: any, selectedPlaylistMedia: string[]): Promise<void>;
+    switchMedia(playlistId: string, media1Id: string, media2Id: string): Promise<void>;
 }
 
 export const getService = (): IService => {
