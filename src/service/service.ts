@@ -13,6 +13,7 @@ export interface IService {
     addMediaToPlaylist(playlistId: any, mediaIds: string[]): Promise<void>;
     getMediaForPlaylist(playlistId: any): Promise<ExtendedMedia[]>;
     removeMediaFromPlaylist(playlistId: any, selectedPlaylistMedia: string[]): Promise<void>;
+    switchMedia(playlistId: string, media1Id: string, media2Id: string): Promise<void>;
 }
 
 export const getService = (): IService => {

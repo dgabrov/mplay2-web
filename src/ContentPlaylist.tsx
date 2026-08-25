@@ -47,18 +47,21 @@ const ContentPlaylist = () => {
     const handleDragEnd = (event: DragEndEvent): void => {
         const {active, over} = event;
 
-        console.log(`current values: ${active.id} and over: ${over && over.id}`);
-
         if (over && active.id !== over.id) {
+            const oldIndex = playlistMedia.findIndex((item) => item.id === active.id);
+            const newIndex = playlistMedia.findIndex((item) => item.id === over.id);
 
-            // TODO here is where you call the service to switch the seqNo for the two numbers
+            const media1 = playlistMedia[oldIndex].id;
+            const media2 = playlistMedia[newIndex].id;
 
-            setPlaylistMedia((prevItems) => {
-                const oldIndex = prevItems.findIndex((item) => item.id === active.id);
-                const newIndex = prevItems.findIndex((item) => item.id === over.id);
+            getService().switchMedia(playlistId, media1, media2)
+                .then(() => {
+                    setPlaylistMedia(arrayMove(playlistMedia, oldIndex, newIndex))
+                })
+                .catch((err: any) => {
+                    dispatch(pushError(err))
+                })
 
-                return arrayMove(prevItems, oldIndex, newIndex);
-            });
         }
     };
 

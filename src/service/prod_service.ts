@@ -78,6 +78,14 @@ export class ProdService implements IService {
 
         return processPost({id, description}, "/updatePlaylist")
     }
+
+    async switchMedia(playlistId: string, media1: string, media2: string): Promise<void> {
+        const payload : any = {
+            playlistId, media1, media2
+        }
+
+        await processPost(payload, "/switchSeq")
+    }
 }
 
 async function processPost(obj: any, suffix: string) {
