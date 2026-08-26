@@ -158,18 +158,9 @@ export function MyComponent() {
 - Media and playlist playback controls
 - Responsive, mobile-friendly UI
 
-## Contributing
-
-Contributions are welcome! Please ensure:
-
-1. Code passes `npm run lint`
-2. TypeScript compiles without errors (`npm run build`)
-3. Changes follow the existing code style and architecture
-4. New components are functional and TypeScript-strict
-
 ## License
 
-This project is licensed under the MIT License – see the LICENSE file for details.
+This project is licensed under the GNU General Public License v2 (GPL v2) – see the LICENSE file for details.
 
 ## Author
 
